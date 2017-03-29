@@ -174,21 +174,19 @@ def process_args(args):
         print(
             "Press 'a' to abort, 'r' to retry, "
             "any other key to save and quit.")
-        while True:
-            key = cv2.waitKey(50)
-            if key != -1:
-                if key == ord('a'):
-                    raise Exception('User aborted.')
-                elif key == ord('r'):
-                    print("Retry capture")
-                    break
-                elif key == ord('u'):
-                    print("Rotated 180.")
-                    frame = mel.lib.image.rotated180(frame)
-                    display.update_image(frame, capindex)
-                else:
-                    is_finished = True
-                    break
+
+        is_finished = True
+        for key in mel.lib.ui.yield_keys_until_quitkey():
+            if key == ord('a'):
+                raise Exception('User aborted.')
+            elif key == ord('r'):
+                print("Retry capture")
+                is_finished = False
+                break
+            elif key == ord('u'):
+                print("Rotated 180.")
+                frame = mel.lib.image.rotated180(frame)
+                display.update_image(frame, capindex)
 
     # write the mole image
     filename = mel.lib.datetime.make_now_datetime_string() + ".jpg"
